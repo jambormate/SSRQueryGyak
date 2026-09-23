@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <a href="/">Főoldal</a>
+    <a href="/all">Összes kiadás</a>
+    <a href="/top3">Top 3 kiadás</a>
+    <a href="/search">Kereső</a>
+    <a href="/expensive">Drága kiadások</a>
+    <a href="/stats">Statisztikák</a>
+    <h2>Költések</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Megnevezés</th>
+                <th>Összeg</th>
+                <th>Kategória</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%expenses.forEach(expense=>{%>
+            <tr class="<%= expense.category %>">
+                <td><%= expense.name %></td>
+                <td><%= expense.amount %> Ft</td>
+                <td><%= expense.category %></td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</body>
+</html>
