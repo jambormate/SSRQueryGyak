@@ -6,64 +6,64 @@ import { retry } from 'rxjs';
 
 @Controller()
 export class AppController {
-expenses: Expense[] = [
-      {
-        name: 'Élelmiszer',
-        amount: 12500,
-        category: 'food',
-      },
-      {
-        name: 'Villanyszámla',
-        amount: 18500,
-        category: 'utilities',
-      },
-      {
-        name: 'Netflix',
-        amount: 3990,
-        category: 'entertainment',
-      },
-      {
-        name: 'Buszjegy',
-        amount: 2500,
-        category: 'misc',
-      },
-      {
-        name: 'Ebéd',
-        amount: 4200,
-        category: 'food',
-      },
-      {
-        name: 'Internet',
-        amount: 7500,
-        category: 'utilities',
-      },
-      {
-        name: 'Mozi',
-        amount: 4500,
-        category: 'entertainment',
-      },
-      {
-        name: 'Tisztítószerek',
-        amount: 6300,
-        category: 'misc',
-      },
-      {
-        name: 'Bevásárlás',
-        amount: 15600,
-        category: 'food',
-      },
-      {
-        name: 'Vízszámla',
-        amount: 5200,
-        category: 'utilities',
-      },
-    ];
-  constructor(private readonly appService: AppService) {}
+  expenses: Expense[] = [
+    {
+      name: 'Élelmiszer',
+      amount: 12500,
+      category: 'food',
+    },
+    {
+      name: 'Villanyszámla',
+      amount: 18500,
+      category: 'utilities',
+    },
+    {
+      name: 'Netflix',
+      amount: 3990,
+      category: 'entertainment',
+    },
+    {
+      name: 'Buszjegy',
+      amount: 2500,
+      category: 'misc',
+    },
+    {
+      name: 'Ebéd',
+      amount: 4200,
+      category: 'food',
+    },
+    {
+      name: 'Internet',
+      amount: 7500,
+      category: 'utilities',
+    },
+    {
+      name: 'Mozi',
+      amount: 4500,
+      category: 'entertainment',
+    },
+    {
+      name: 'Tisztítószerek',
+      amount: 6300,
+      category: 'misc',
+    },
+    {
+      name: 'Bevásárlás',
+      amount: 15600,
+      category: 'food',
+    },
+    {
+      name: 'Vízszámla',
+      amount: 5200,
+      category: 'utilities',
+    },
+  ];
+  constructor(private readonly appService: AppService) { }
 
   @Get()
   @Render('index')
   getHome() {
-    const total = this.expenses.reduce((sum, expense) => sum + expense.amount ,0)
+    const total = this.expenses.reduce((sum, expense) => sum + expense.amount, 0)
     return {
       title: "Összes kiadás összege",
       total
@@ -71,20 +71,20 @@ expenses: Expense[] = [
   }
   @Get('all')
   @Render('all')
-  getAll(){
-    return{
+  getAll() {
+    return {
       title: "Összes kiadás",
       expenses: this.expenses
     }
   }
   @Get('top3')
   @Render('all')
-  getTop3(){
+  getTop3() {
     const top3 = [...this.expenses]
-    .sort((a, b) => b.amount- a.amount)
-    .slice(0, 3) 
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 3)
 
-    return{
+    return {
       title: 'Top 3 kiadás',
       expenses: top3
     }
@@ -92,30 +92,69 @@ expenses: Expense[] = [
 
   @Get('search')
   @Render('search')
-  getSearch(@Query('name')name?:string){
-    const searchTerm = name?.toLowerCase() ??'';
+  getSearch(@Query('name') name?: string) {
+    const searchTerm = name?.toLowerCase() ?? '';
     const results = this.expenses.filter(expense =>
       expense.name.toLowerCase().includes(searchTerm)
     )
-    return{
-      title: 'Kiadás keresése', 
-      expenses : results,
+    return {
+      title: 'Kiadás keresése',
+      expenses: results,
       searchTerm: name ?? ''
     }
   }
   @Get('expensive')
   @Render('expensive')
-  getExpensive(@Query('amount') amount?:string){
+  getExpensive(@Query('amount') amount?: string) {
     const minAmount = Number(amount)
 
-    const results  = this.expenses.filter(
+    const results = this.expenses.filter(
       expense => expense.amount > minAmount
     )
 
-    return{
+    return {
       title: 'Drága kiadások',
       expenses: results,
       amount: amount ?? ''
     }
+  }
+  @Get('stats')
+  @Render('stats')
+  getStats() {
+    const osszesDarab = this.expenses.length;
+    let osszesOsszeg = 0;
+    for (const expense of this.expenses) {
+      osszesOsszeg += expense.amount;
+    }
+    const osszesAtlag = osszesOsszeg / osszesDarab;
+    const kategoriak: {
+      [key: string]: {
+        darab: number;
+        osszeg: number;
+        atlag: number;
+      };
+    } = {};
+    for (const expense of this.expenses) {
+      if (!kategoriak[expense.category]) {
+        kategoriak[expense.category] = {
+          darab: 0,
+          osszeg: 0,
+          atlag: 0
+        };
+      }
+      kategoriak[expense.category].darab++;
+      kategoriak[expense.category].osszeg += expense.amount;
+    }
+    for (const category in kategoriak) {
+      kategoriak[category].atlag =
+        kategoriak[category].osszeg / kategoriak[category].darab;
+    }
+    return {
+      title: 'Statisztikák',
+      osszesDarab,
+      osszesOsszeg,
+      osszesAtlag,
+      kategoriak
+    };
   }
 }
