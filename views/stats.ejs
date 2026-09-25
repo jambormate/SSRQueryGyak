@@ -1,40 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
-    <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-    <a href="/">Főoldal</a>
-    <a href="/all">Összes kiadás</a>
-    <a href="/top3">Top 3 kiadás</a>
-    <a href="/search">Kereső</a>
-    <a href="/expensive">Drága kiadások</a>
-    <a href="/stats">Statisztikák</a>
-
-    <h2>Statisztikák</h2>
-    <h3>Összes költés</h3>
-    <p>Összesen <%= osszesDarab %> db költés volt</p>
-    <p>Összes összeg: <%= osszesOsszeg %> Ft</p>
-    <p>Összes átlag: <%= osszesAtlag.toFixed(2) %> Ft</p>
-    <h3>Kategóriánként</h3>
-    <table>
+<%- include('header') %>
+<h2>Statisztikák</h2>
+<h3>Összes költés</h3>
+<p>Összesen <%= osszesDarab %> db költés volt</p>
+<p>Összes összeg: <%= osszesOsszeg %> Ft</p>
+<p>Összes átlag: <%= osszesAtlag.toFixed(2) %> Ft</p>
+<h3>Kategóriánként</h3>
+<table>
+    <tr>
+        <th>Kategória</th>
+        <th>Hány darab</th>
+        <th>Összeg</th>
+        <th>Átlag</th>
+    </tr>
+    <% kategoriak.forEach((category, name) => { %>
         <tr>
-            <th>Kategória</th>
-            <th>Hány darab</th>
-            <th>Összeg</th>
-            <th>Átlag</th>
+            <td><%= name %></td>
+            <td><%= category.darab %></td>
+            <td><%= category.osszeg %> Ft</td>
+            <td><%= category.atlag.toFixed(2) %> Ft</td>
         </tr>
-        <% for (const category in kategoriak) { %>
-            <tr>
-                <td><%= category %></td>
-                <td><%= kategoriak[category].darab %></td>
-                <td><%= kategoriak[category].osszeg %> Ft</td>
-                <td><%= kategoriak[category].atlag.toFixed(2) %> Ft</td>
-            </tr>
-        <% } %>
-    </table>
-</body>
-</html>
+    <% }) %>
+</table>
+<%- include('footer') %>
